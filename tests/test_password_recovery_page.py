@@ -34,7 +34,7 @@ class TestPasswordRecovery:
         
         # Заполняем email и отправляем форму
         recovery_page = RecoveryPage(driver)
-        recovery_page.filling_recovery_form(user_data)
+        recovery_page.filling_recovery_form(user_data['user'])
         
         # Проверяем появление поля для ввода кода из письма
         assert recovery_page.check_visible_recovery_code()
@@ -50,6 +50,6 @@ class TestPasswordRecovery:
         login_page = LoginPage(driver)
         login_page.hide_or_show_password()
         
-        # Проверяем, что поле пароля стало активным (фокус или соответствующий класс)
+        # Проверяем, что поле пароля стало активным
         assert login_page.check_active_password_field(), \
             "Поле пароля не стало активным после клика на иконку"

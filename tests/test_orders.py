@@ -21,16 +21,27 @@ class TestOrders:
         assert order_feed_page.check_visible_order_window(), \
             "Модальное окно с деталями заказа не открылось"
 
-    @allure.title('Проверка отображения заказов пользователя в личной истории')
-    def test_orders_in_orders_history_is_on_order_feed_page(self, driver, login_user):
+    @allure.title('Создание заказа возвращает реальный номер (не заглушку 9999)')
+    def test_create_order_returns_real_number(self, driver, login_user):
         main_page = MainPage(driver)
         
         # Создаём заказ и получаем его номер
         created_order_number = main_page.create_order()
         
-        # Убеждаемся, что номер реальный (не заглушка)
-        assert created_order_number != '9999' and created_order_number.isdigit() and len(created_order_number) > 3, \
-            f"Создан фейковый заказ #{created_order_number}"
+        # Проверяем, что номер реальный (не заглушка)
+        assert created_order_number != '9999', \
+            f"Заказ остался заглушкой #{created_order_number}"
+        assert created_order_number.isdigit(), \
+            f"Номер заказа не состоит из цифр: {created_order_number}"
+        assert len(created_order_number) > 3, \
+            f"Номер заказа слишком короткий: {created_order_number}"
+
+    @allure.title('Созданный заказ отображается в личной истории заказов')
+    def test_created_order_appears_in_user_history(self, driver, login_user):
+        main_page = MainPage(driver)
+        
+        # Создаём заказ (без проверки номера здесь — это уже проверено в другом тесте)
+        created_order_number = main_page.create_order()
         
         # Переходим в профиль → историю заказов
         main_page.go_to_profile()
